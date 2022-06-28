@@ -1,4 +1,4 @@
-Original Table was split into two tables
+Original Table was checked for duplicates and split into two tables
 
 -TicketLocations <Ticket ID,Date/Time,Locations>
 -TicketViolations <Ticket ID,Violation Code,Violation Description>
