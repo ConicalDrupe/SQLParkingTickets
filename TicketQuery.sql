@@ -26,6 +26,7 @@ SET [Ticket Number]=[Ticket Number],[Date/Time]=[Date/Time],[Ticket Location]=[T
 Where [Ticket Number] is not null
 and [Date/Time] is not null
 and [Ticket Location] is not null
+---- DOES NOT REMOVE ROWS WITH NULL VALUES
 
 UPDATE ParkingTickets..TicketViolations$
 SET [Ticket Number]=[Ticket Number],[Violation Code]=[Violation Code],
@@ -33,6 +34,7 @@ SET [Ticket Number]=[Ticket Number],[Violation Code]=[Violation Code],
 Where [Ticket Number] is not null
 and [Violation Code] is not null
 and [Violation Description] is not null
+
 ---------------------------------------------Removal of Blank data complete--------------
 
 ----(2)-------------Date Time Error---------------------------
