@@ -13,13 +13,14 @@ SELECT * INTO #temp_locations
 FROM ParkingTickets..TicketLocations$
 --Where clause be used here, but our purpose is to check if the UPDATE works before implementing
 
-UPDATE #temp_locations
-SET [Ticket Number]=[Ticket Number],[Date/Time]=[Date/Time],[Ticket Location]=[Ticket Location]
-Where [Ticket Number] is not null
-and [Date/Time] is not null
-and [Ticket Location] is not null
--- 102467 rows affected, Great! UPDATE works as we wanted!
+DELETE FROM #temp_locations
+Where [Ticket Number] is null
+or [Date/Time] is null
+or [Ticket Location] is null
+-- 936 rows affected with 102,467 rows remaining, Great! DELETE works as we wanted!
 
+Select *
+From #temp_locations
 --Updating Our two Tables
 UPDATE ParkingTickets..TicketLocations$
 SET [Ticket Number]=[Ticket Number],[Date/Time]=[Date/Time],[Ticket Location]=[Ticket Location]
