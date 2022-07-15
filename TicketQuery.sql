@@ -96,10 +96,56 @@ ALTER TABLE ParkingTickets..Locations
 DROP COLUMN [Date/Time],[Ticket Location]
 
 ALTER TABLE ParkingTickets..Locations
-ALTER COLUMN [Ticket ID] varchar(30) NOT NULL
+ALTER COLUMN [Ticket ID] int NOT NULL
 
 ALTER TABLE ParkingTickets..Locations
 ADD Primary Key ([Ticket ID])
 
-Select TABLE_NAME
-From INFORMATION_SCHEMA.TABLES
+------(6) Condensing Violation Types--------
+ALTER TABLE ParkingTickets..Violations
+Add violation_type varchar(50)
+
+UPDATE ParkingTickets..Violations
+Set violation_type = 'No Standing Parking'
+Where [Violation Code] = 10 or [Violation Code] = 17 or [Violation Code] = 22 or [Violation Code] = 22 or [Violation Code] = 23 or [Violation Code] = 25 or [Violation Code] = 31 or [Violation Code] = 32 or [Violation Code] = 57
+--
+UPDATE ParkingTickets..Violations
+Set violation_type = 'No Parking Anytime'
+Where [Violation Code] = 3 or [Violation Code] = 5 or [Violation Code] = 34 or [Violation Code] = 37
+
+UPDATE ParkingTickets..Violations
+Set violation_type = 'Expired/Overtime'
+Where [Violation Code] = 7 or [Violation Code] = 41 or [Violation Code] = 50
+
+UPDATE ParkingTickets..Violations
+Set violation_type = 'Sign Violation or Impeding Traffic'
+Where [Violation Code] = 9 or [Violation Code] = 35 or [Violation Code] = 36 or [Violation Code] = 43 or [Violation Code] = 54
+
+UPDATE ParkingTickets..Violations
+Set violation_type = 'Prohibited Vehicle'
+Where [Violation Code] = 2 or [Violation Code] = 38 or [Violation Code] = 42 or [Violation Code] = 48
+
+UPDATE ParkingTickets..Violations
+Set violation_type = 'Orientation Violation'
+Where [Violation Code] = 8 or [Violation Code] = 19 or [Violation Code] = 20 or [Violation Code] = 24 or [Violation Code] = 27 or [Violation Code] = 28 or [Violation Code] = 59
+
+--(7) Finalize Violations Table
+--Dropping columns
+--Adding Foreign key
+
+ALTER TABLE ParkingTickets..Violations
+DROP COLUMN [Violation Code],[Violation Description]
+
+ALTER TABLE ParkingTickets..Violations
+ALTER COLUMN [Ticket ID] int NOT NULL
+
+--Foreign Key Conflict?
+ALTER TABLE ParkingTickets..Violations
+ADD Foreign Key ([Ticket ID])
+REFERENCES ParkingTickets..Locations([Ticket ID])
+------------------------------------------------------
+
+
+
+
+
