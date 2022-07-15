@@ -14,14 +14,14 @@ PRIMARY KEY(Ticket_ID)
 )
 
 Select *
-INTO Locations
+INTO ParkingTickets..Locations
 From ParkingTickets..TicketLocations
 WHERE [Ticket ID] is not null
 and [Date/Time] is not null
 and [Ticket Location] is not null
 
 Select *
-INTO Violations
+INTO ParkingTickets..Violations
 From ParkingTickets..TicketViolations
 WHERE [Ticket ID] is not null
 and [Violation Code] is not null
@@ -29,23 +29,23 @@ and [Violation Description] is not null
 
 
 ----(2) Fix [Date/Time] Error
-ALTER TABLE Locations
+ALTER TABLE ParkingTickets..Locations
 Add date_time DATETIME
 
-UPDATE Locations
+UPDATE ParkingTickets..Locations
 SET [Date/Time] = Replace([Date/Time],'0020','2020')
 
-UPDATE Locations
+UPDATE ParkingTickets..Locations
 SET [Date/Time] = Replace([Date/Time],'0021','2021')
 
-UPDATE Locations
+UPDATE ParkingTickets..Locations
 SET date_time = convert(DATETIME,[Date/Time])
 
 Select FORMAT(date_time,'MM/dd/yyyy hh:mm tt')
-From Locations
+From ParkingTickets..Locations
 
 --(3) Split Lot and Addresses
-ALTER TABLE Locations
+ALTER TABLE ParkingTickets..Locations
 ADD	Lot varchar(10),
 	[Address] varchar(100)
 
@@ -56,15 +56,15 @@ SELECT DISTINCT
  as LotNumber
 ,RIGHT([Ticket Location], LEN([Ticket Location]) - CHARINDEX('-',[Ticket Location])) 
  as [Address]
-FROM Locations
+FROM ParkingTickets..Locations
 Where TRIM('-' FROM LEFT([Ticket Location], CHARINDEX('-',[Ticket Location]))) != ' '
 Order by 3 desc
 
 --Perform another trim, to correctly split address and lot number
-UPDATE Locations
+UPDATE ParkingTickets..Locations
 Set [Address] = RIGHT(RIGHT([Ticket Location], LEN([Ticket Location]) - CHARINDEX('-',[Ticket Location])), LEN(RIGHT([Ticket Location], LEN([Ticket Location]) - CHARINDEX('-',[Ticket Location]))) - CHARINDEX('-',RIGHT([Ticket Location], LEN([Ticket Location]) - CHARINDEX('-',[Ticket Location]))))
 
-UPDATE Locations
+UPDATE ParkingTickets..Locations
 Set [Lot] = CASE 
 			WHEN TRIM('-' FROM LEFT([Ticket Location], CHARINDEX('-',[Ticket Location]))) = ' ' 
 			THEN 'Street'
@@ -77,10 +77,10 @@ Set [Lot] = CASE
 -- Evening 6pm-midnight
 -- Late Night midnight-6am
 
-ALTER TABLE Locations
+ALTER TABLE ParkingTickets..Locations
 ADD time_of_day varchar(20)
 
-UPDATE Locations
+UPDATE ParkingTickets..Locations
 Set time_of_day = CASE
 	When CONVERT(varchar(255),CONVERT(Time(0),date_time)) between '06:00:00' and '12:00:00' Then 'Morning'
 	When CONVERT(varchar(255),CONVERT(Time(0),date_time)) between '12:00:00' and '18:00:00' Then 'Afternoon'
@@ -92,11 +92,14 @@ Set time_of_day = CASE
 -- Drop appropriate Columns
 -- Add primary key
 
-ALTER TABLE Locations
+ALTER TABLE ParkingTickets..Locations
 DROP COLUMN [Date/Time],[Ticket Location]
 
-ALTER TABLE Locations
+ALTER TABLE ParkingTickets..Locations
 ALTER COLUMN [Ticket ID] varchar(30) NOT NULL
 
-ALTER TABLE Locations
+ALTER TABLE ParkingTickets..Locations
 ADD Primary Key ([Ticket ID])
+
+Select TABLE_NAME
+From INFORMATION_SCHEMA.TABLES
