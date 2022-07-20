@@ -26,7 +26,10 @@ From ParkingTickets..TicketViolations
 WHERE [Ticket ID] is not null
 and [Violation Code] is not null
 and [Violation Description] is not null
-
+and [Ticket ID] IN --Helps us later on, when adding a foreign key on [Ticket ID]
+	(
+	Select [Ticket ID] From ParkingTickets..Locations
+	)
 
 ----(2) Fix [Date/Time] Error
 ALTER TABLE ParkingTickets..Locations
@@ -139,12 +142,12 @@ DROP COLUMN [Violation Code],[Violation Description]
 ALTER TABLE ParkingTickets..Violations
 ALTER COLUMN [Ticket ID] int NOT NULL
 
---Foreign Key Conflict?
 ALTER TABLE ParkingTickets..Violations
 ADD Foreign Key ([Ticket ID])
 REFERENCES ParkingTickets..Locations([Ticket ID])
 ------------------------------------------------------
-
+---(8) Metrics and Tables
+--
 
 
 
