@@ -146,8 +146,54 @@ ALTER TABLE ParkingTickets..Violations
 ADD Foreign Key ([Ticket ID])
 REFERENCES ParkingTickets..Locations([Ticket ID])
 ------------------------------------------------------
----(8) Metrics and Tables
---
+---(8) Metrics and Results
+--Most Common Violation
+--Frequency of Top Violation by months
+--Most Ticketed Location
+--Most Ticketed Time of Day (2020 and 2021)
+--Most Ticketed Day of the Week (2020 and 2021)
+
+--Most Common Violation
+Select violation_type
+,Count(violation_type) as violation_count
+From ParkingTickets..Violations
+Group by violation_type
+Order by 2 desc
+
+--Frequency of Top Violation by months
+Select DATENAME(Month,l.date_time) as [Month]
+,year(l.date_time) as [year]
+,Count(DATENAME(Month,l.date_time)) as count
+From ParkingTickets..Violations v
+INNER JOIN ParkingTickets..Locations l
+On v.[Ticket ID] = l.[Ticket ID]
+Where v.violation_type = 'Expired/Overtime'
+Group by year(l.date_time),DATENAME(Month,l.date_time)
+Order by 2,3 desc
+
+--Most Ticketed Location
+Select [Address]
+,Count([Address]) as address_count
+From ParkingTickets..Locations
+Group by [Address]
+Order by 2 desc
+
+--Most Ticketed Time of Day
+Select time_of_day
+,year(date_time) as [year]
+,Count(time_of_day) as count
+From ParkingTickets..Locations
+Group by time_of_day, year(date_time)
+Order by 2,3 desc
+
+--Most Ticketed Day of the week
+Select DATENAME(Weekday,date_time) as [day]
+,year(date_time) as [year]
+,Count(DATENAME(Weekday,date_time)) as count
+From ParkingTickets..Locations
+Group by DATENAME(Weekday,date_time), year(date_time)
+Order by 2,3 desc
+
 
 
 
