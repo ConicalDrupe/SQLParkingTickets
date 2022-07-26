@@ -196,6 +196,7 @@ Order by 2,3 desc
 
 
 -------Tables for Tableau Visualization----------
+--Making sure there is common data between tables for proper filtering later on
 
 --Most Common Violation
 Select violation_type
@@ -205,25 +206,38 @@ Group by violation_type
 Order by 2 desc
 
 --Most Ticketed Location
-Select [Address]
-,Count([Address]) as address_count
-From ParkingTickets..Locations
-Group by [Address]
-Order by 2 desc
+Select l.[Address]
+,v.violation_type
+,Count(l.[Address]) as address_count
+From ParkingTickets..Locations l
+Join ParkingTickets..Violations v
+On l.[Ticket ID] = v.[Ticket ID]
+Group by l.[Address]
+,v.violation_type
+Order by 3 desc
 
 --Most Ticketed Time of Day
-Select time_of_day
-,year(date_time) as [year]
-,Count(time_of_day) as count
-From ParkingTickets..Locations
-Group by time_of_day, year(date_time)
+Select l.time_of_day
+,year(l.date_time) as [year]
+,Count(l.time_of_day) as count
+,v.violation_type
+From ParkingTickets..Locations l
+Join ParkingTickets..Violations v
+On l.[Ticket ID] = v.[Ticket ID]
+Group by l.time_of_day
+,year(l.date_time)
+,v.violation_type
 Order by 2,3 desc
 
 --Tickets by Datetime
-Select Convert(DATE,date_time) as [date]
-,Count([Ticket ID]) as ticket_count
-From ParkingTickets..Locations
-Group by Convert(DATE,date_time)
+Select Convert(DATE,l.date_time) as [date]
+,Count(l.[Ticket ID]) as ticket_count
+,v.violation_type
+From ParkingTickets..Locations l
+Join ParkingTickets..Violations v
+On l.[Ticket ID] = v.[Ticket ID]
+Group by Convert(DATE,l.date_time)
+,v.violation_type
 order by 2 desc
 
 --Violation frequency with datetime
