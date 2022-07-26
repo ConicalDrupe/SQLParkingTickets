@@ -1,18 +1,5 @@
-CREATE TABLE Locations (
-Ticket_ID varchar(50),
-date_time DATETIME,
-Lot_Address varchar(100),
-Lot varchar(5),
-[Address] varchar(100),
-PRIMARY KEY(Ticket_ID)
-)
 
-CREATE TABLE Violations (
-Ticket_ID varchar(50),
-violation_type varchar(50),
-PRIMARY KEY(Ticket_ID)
-)
-
+--(1) Remove Null Rows
 Select *
 INTO ParkingTickets..Locations
 From ParkingTickets..TicketLocations
