@@ -146,7 +146,7 @@ ALTER TABLE ParkingTickets..Violations
 ADD Foreign Key ([Ticket ID])
 REFERENCES ParkingTickets..Locations([Ticket ID])
 ------------------------------------------------------
----(8) Metrics and Results
+---(8) Metrics and Results via SQL [SEE NEXT SECTION FOR TABLEAU EXPORT]
 --Most Common Violation
 --Frequency of Top Violation by months
 --Most Ticketed Location
@@ -195,6 +195,43 @@ Group by DATENAME(Weekday,date_time), year(date_time)
 Order by 2,3 desc
 
 
+-------Tables for Tableau Visualization----------
 
+--Most Common Violation
+Select violation_type
+,Count(violation_type) as violation_count
+From ParkingTickets..Violations
+Group by violation_type
+Order by 2 desc
 
+--Most Ticketed Location
+Select [Address]
+,Count([Address]) as address_count
+From ParkingTickets..Locations
+Group by [Address]
+Order by 2 desc
 
+--Most Ticketed Time of Day
+Select time_of_day
+,year(date_time) as [year]
+,Count(time_of_day) as count
+From ParkingTickets..Locations
+Group by time_of_day, year(date_time)
+Order by 2,3 desc
+
+--Tickets by Datetime
+Select Convert(DATE,date_time) as [date]
+,Count([Ticket ID]) as ticket_count
+From ParkingTickets..Locations
+Group by Convert(DATE,date_time)
+order by 2 desc
+
+--Violation frequency with datetime
+Select v.violation_type
+,l.date_time
+,Count(v.violation_type) as vio_count
+From ParkingTickets..Violations v
+JOIN ParkingTickets..Locations l
+On v.[Ticket ID] = l.[Ticket ID]
+Group by v.violation_type,l.date_time
+order by 3 desc
